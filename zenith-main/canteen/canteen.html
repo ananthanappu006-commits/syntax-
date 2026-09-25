@@ -1,0 +1,239 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canteen Side | EAT, UP! Live Kitchen Dispatch & Order Display</title>
+  <meta name="description" content="Dedicated kitchen dispatch and canteen staff operations portal. Real-time incoming student orders, preparation workflow, and instantaneous item stock toggling.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FF5E00'><path d='M4 11h16a1 1 0 0 1 1 1c0 5-4 9-9 9s-9-4-9-9a1 1 0 0 1 1-1Z'/></svg>">
+</head>
+<body>
+
+  <!-- ================= Top Navigation Bar (Liquid Glass Header) ================= -->
+  <header class="portal-navbar">
+    <div class="portal-navbar-inner">
+      <!-- Brand Logo -->
+      <div class="nav-brand" style="cursor: pointer;" onclick="location.href='canteen.html'">
+        <div class="brand-crest">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 11h16a1 1 0 0 1 1 1c0 5-4 9-9 9s-9-4-9-9a1 1 0 0 1 1-1Z"/>
+            <path d="M7 4c1 2 0 4 0 5"/>
+            <path d="M12 3c1 2 0 4 0 6"/>
+            <path d="M17 4c1 2 0 4 0 5"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span class="brand-name">EAT, UP!</span>
+            <span class="portal-brand-badge portal-badge-canteen">
+              <span class="pulse-indicator-dot"></span>
+              Kitchen & Canteen Staff
+            </span>
+          </div>
+          <span class="brand-subtext">Live Counter 1 & 2 • Kitchen Display System</span>
+        </div>
+      </div>
+
+      <!-- Center Status Pill -->
+      <div style="display: flex; align-items: center; gap: 0.5rem; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); padding: 0.45rem 0.95rem; border-radius: 999px; font-size: 0.82rem; font-weight: 700; color: #059669;">
+        <span class="pulse-indicator-dot"></span>
+        <span>Orders Syncing Live via Reactive Storage</span>
+      </div>
+
+      <!-- Right Action Items -->
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <!-- Simulate Incoming Order Button -->
+        <button class="nav-pill-btn" onclick="window.canteenConsole.simulateIncomingOrder()" title="Simulate a new incoming student order" style="background: rgba(255, 94, 0, 0.1); border-color: rgba(255, 94, 0, 0.3); color: var(--brand-orange-deep); font-weight: 700;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>Simulate Order</span>
+        </button>
+
+        <!-- Sound Toggle -->
+        <button id="sound-toggle-btn" class="nav-pill-btn" onclick="window.canteenConsole.toggleSound()" title="Toggle Sound Chimes" style="padding: 0.5rem 0.75rem;">
+          <svg class="ui-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+          </svg>
+        </button>
+
+        <!-- Go to Admin Page -->
+        <a href="admin.html" class="nav-pill-btn" style="text-decoration: none; font-size: 0.82rem; font-weight: 700; color: var(--brand-orange-deep); border-color: rgba(255, 94, 0, 0.3);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span>Admin Portal</span>
+        </a>
+
+        <!-- Go to Student Website -->
+        <a href="index.html" class="btn-primary" style="text-decoration: none; padding: 0.55rem 1rem; font-size: 0.84rem; display: inline-flex; align-items: center; gap: 0.4rem;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span>Go to Website</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= Main Content Container ================= -->
+  <main class="main-content" style="max-width: 1400px; margin: 2rem auto; padding: 0 1.5rem;">
+
+    <!-- Kitchen Stats Bar -->
+    <div class="admin-metrics-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 2rem;">
+      <div class="admin-metric-card">
+        <div class="metric-navy-icon" style="background: linear-gradient(135deg, #FF6A00, #FF9500);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </div>
+        <div class="metric-details">
+          <div id="canteen-stat-placed" class="metric-number">0</div>
+          <div class="metric-text">New Placed Orders</div>
+        </div>
+      </div>
+
+      <div class="admin-metric-card">
+        <div class="metric-navy-icon" style="background: linear-gradient(135deg, #F59E0B, #D97706);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="metric-details">
+          <div id="canteen-stat-preparing" class="metric-number">0</div>
+          <div class="metric-text">Cooking & In Prep</div>
+        </div>
+      </div>
+
+      <div class="admin-metric-card">
+        <div class="metric-navy-icon" style="background: linear-gradient(135deg, #10B981, #059669);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2"><path d="M18 8h1a4 4 0 1 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4Z"/></svg>
+        </div>
+        <div class="metric-details">
+          <div id="canteen-stat-ready" class="metric-number">0</div>
+          <div class="metric-text">Ready for Pickup</div>
+        </div>
+      </div>
+
+      <div class="admin-metric-card">
+        <div class="metric-navy-icon" style="background: linear-gradient(135deg, #3B82F6, #1D4ED8);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="metric-details">
+          <div id="canteen-stat-completed" class="metric-number">381</div>
+          <div class="metric-text">Dispensed Today</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 1: Live Kitchen Orders Kanban Board -->
+    <div style="margin-bottom: 3rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h2 class="section-title">Live Kitchen Dispatch Board</h2>
+          <p class="section-subtitle">Real-time incoming student orders, preparation progress, and counter collection dispatch</p>
+        </div>
+      </div>
+
+      <div id="canteen-orders-board"></div>
+    </div>
+
+    <!-- Section 2: Kitchen Ingredient Stock Warnings -->
+    <div id="canteen-low-stock-container" style="margin-bottom: 3rem;"></div>
+
+    <!-- Section 3: Instant Food Availability & Stock Manager -->
+    <div id="canteen-quick-stock-container" style="margin-bottom: 3.5rem;"></div>
+
+    <!-- ================= Canteen Footer ================= -->
+    <footer class="canteen-main-footer">
+      <div class="footer-top-row">
+        <div class="footer-brand-col">
+          <div class="footer-logo">
+            <div class="footer-crest">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2">
+                <path d="M4 11h16a1 1 0 0 1 1 1c0 5-4 9-9 9s-9-4-9-9a1 1 0 0 1 1-1Z"/>
+                <path d="M7 4c1 2 0 4 0 5"/>
+                <path d="M12 3c1 2 0 4 0 6"/>
+                <path d="M17 4c1 2 0 4 0 5"/>
+              </svg>
+            </div>
+            <span class="footer-brand-text">EAT, UP!</span>
+          </div>
+          <p class="footer-tagline">Canteen & kitchen operations display for food preparation, live token queue tracking, and meal dispatch.</p>
+          <div class="footer-hours-note" style="display: inline-flex; align-items: center; gap: 0.4rem;">
+            <svg class="ui-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span>Kitchen Operating Hours: 7:30 AM – 10:30 PM Daily</span>
+          </div>
+        </div>
+
+        <div class="footer-nav-col">
+          <div class="footer-col-title">KITCHEN ACTIONS</div>
+          <a href="javascript:void(0)" onclick="window.canteenConsole.simulateIncomingOrder()">Simulate Student Order</a>
+          <a href="javascript:void(0)" onclick="window.canteenConsole.filterCategory('all')">View All Items</a>
+          <a href="javascript:void(0)" onclick="window.canteenConsole.quickRestockAll()">Restock Low Supplies</a>
+        </div>
+
+        <div class="footer-nav-col">
+          <div class="footer-col-title">STATION LINKS</div>
+          <a href="canteen.html">Kitchen Display System (KDS)</a>
+          <a href="admin.html">Admin Menu Manager</a>
+          <a href="admin.html">Financial Analytics</a>
+        </div>
+
+        <div class="footer-nav-col">
+          <div class="footer-col-title">PORTAL SWITCHER</div>
+          <a href="index.html">Student Ordering Website</a>
+          <a href="canteen.html">Canteen Kitchen Staff</a>
+          <a href="admin.html">Admin Portal</a>
+        </div>
+      </div>
+
+      <!-- Quick Cross-Portal Switcher Bar -->
+      <div class="footer-portal-switcher">
+        <div class="footer-portal-title">
+          <strong>Campus Dining & Operations Portals</strong>
+          <span>Seamlessly switch between the student dining site, kitchen staff board, and admin portal.</span>
+        </div>
+        <div class="footer-portal-buttons">
+          <a href="index.html" class="footer-portal-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span>Go to Student Website</span>
+          </a>
+          <a href="canteen.html" class="footer-portal-btn active">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 8h1a4 4 0 1 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg>
+            <span>Canteen Side (Current)</span>
+          </a>
+          <a href="admin.html" class="footer-portal-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span>Go to Admin Page</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-bottom-row">
+        <div>© 2026 EAT, UP! • Smart Campus Canteen Management Platform. All rights reserved.</div>
+        <div style="display: flex; gap: 1rem;">
+          <span>Nutritional Transparency</span>
+          <span>•</span>
+          <span>Campus Allergy Policy</span>
+        </div>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- Toast Stack -->
+  <div id="toast-stack" class="toast-stack"></div>
+
+  <!-- Core Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/canteen.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      window.canteenStorage = new CanteenStorage();
+      window.canteenAudio = new CanteenAudio();
+      window.canteenConsole = new CanteenConsole(window.canteenStorage, window.canteenAudio);
+    });
+  </script>
+
+</body>
+</html>
