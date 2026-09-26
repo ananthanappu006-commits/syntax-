@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartCampus — Integrated Smart Campus Management Platform</title>
+  <meta name="description"
+    content="Centralized smart campus platform connecting students, faculty, administration, security, and maintenance with real-time facilities, AI matching, ticketing, and navigation." />
+
+  <!-- Google Fonts Fallbacks & Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+    rel="stylesheet" />
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/modules.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+
+  <!-- Favicon SVG -->
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏫</text></svg>" />
+
+  <!-- Prevent Theme FOUC -->
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem('smartcampus_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      if (savedTheme === 'dark') document.documentElement.classList.add('dark-theme');
+    })();
+  </script>
+</head>
+
+<body>
+  <div id="app-root">
+    <!-- App Sidebar (Eduplex Dark & Lime Active Style) -->
+    <aside class="app-sidebar" id="app-sidebar">
+      <!-- Brand Logo -->
+      <div class="brand-wrapper">
+        <div class="brand-icon">🏫</div>
+        <div class="brand-details">
+          <h2>SmartCampus</h2>
+          <span>Digital Campus OS</span>
+        </div>
+      </div>
+
+      <!-- Role Switcher & Segregation Badge -->
+      <div class="sidebar-role-badge">
+        <div class="role-tag">
+          <span>Active Role</span>
+          <span style="color: var(--accent-lime); font-size: 0.65rem;">SWITCH VIEW</span>
+        </div>
+        <select id="role-select" onchange="window.handleRoleSwitch(this.value)">
+          <option value="student" selected>👨‍🎓 Student</option>
+          <option value="faculty">👨‍🏫 Faculty Member</option>
+          <option value="admin">🧑‍💼 Administrator</option>
+          <option value="security">🛡️ Security Staff</option>
+          <option value="maintenance">🧑‍🔧 Maintenance Staff</option>
+        </select>
+      </div>
+
+      <!-- Dynamic Navigation Menu: Strictly populates only what this role can use -->
+      <div class="nav-section-title">Navigation</div>
+      <nav class="sidebar-nav" id="sidebar-nav">
+        <!-- Rendered dynamically by window.renderSidebarNav() in app.js -->
+      </nav>
+
+      <!-- Bottom Reference Widget (Lime card with circular arrow) -->
+      <div class="sidebar-bottom-widget" id="sidebar-bottom-widget">
+        <div class="widget-arrow">↗</div>
+        <h4>Student Portal</h4>
+        <p>Active session authenticated. 11 authorized tools online.</p>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="app-main">
+      <!-- App Header -->
+      <header class="app-header">
+        <!-- Reference Welcome Title -->
+        <div class="header-welcome">
+          <h1 id="header-welcome-title">Welcome back, Kasinadh 👋</h1>
+        </div>
+
+        <!-- Universal Search Input (Pill Shaped with Icon) -->
+        <div class="header-search">
+          <span class="header-search-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </span>
+          <input type="text" placeholder="Search campus services, rooms, records..."
+            onkeypress="window.handleUniversalSearch(event)" />
+        </div>
+
+        <!-- Header Actions: Dark/Light, Notifications, SOS Alert, User Avatar -->
+        <div class="header-actions">
+          <!-- Dark / Light Theme Toggle -->
+          <button class="btn-icon theme-toggle-btn" id="theme-toggle-btn" onclick="window.toggleTheme()"
+            title="Toggle Dark / Light Theme" aria-label="Toggle Dark / Light Theme">
+            <span id="theme-toggle-icon">🌙</span>
+          </button>
+
+          <!-- Notification Bell -->
+          <button class="btn-icon" onclick="window.toggleNotificationCenter()" title="Notifications"
+            aria-label="Notifications">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            <span id="notif-unread-badge"
+              style="position: absolute; top: 6px; right: 6px; width: 15px; height: 15px; background: var(--status-sos); border-radius: 50%; font-size: 0.65rem; font-weight: 800; color: #fff; display: flex; align-items: center; justify-content: center;">
+              3
+            </span>
+          </button>
+
+          <!-- Emergency SOS Button -->
+          <button class="btn btn-sos" onclick="window.openSOSModal()" title="Emergency Assistance (SOS)">
+            <span>🚨</span> SOS ALERT
+          </button>
+
+          <!-- User Avatar Pill -->
+          <div class="header-user-avatar" id="header-user-avatar"
+            onclick="window.showToast('Profile: ' + window.campusState.data.currentUser.name)"
+            title="Current User Profile">
+            👨‍🎓
+          </div>
+
+          <!-- Sign Out / Switch Role Button -->
+          <button class="btn-icon" onclick="window.handleUserLogout()" title="Switch Account / Sign Out" aria-label="Sign Out">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Dynamic View Container -->
+      <main class="main-view-container" id="view-container">
+        <!-- Rendered dynamically by Router -->
+      </main>
+    </div>
+  </div>
+
+  <!-- AI Campus Copilot Floating Bubble & Drawer -->
+  <div class="ai-copilot-bubble" onclick="window.toggleAICopilot()" title="Open AI Campus Copilot">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10S2 17.523 2 12A10 10 0 0 1 12 2z"></path>
+      <path d="m9 12 2 2 4-4"></path>
+    </svg>
+  </div>
+
+  <div class="ai-drawer" id="ai-drawer">
+    <div class="ai-drawer-header">
+      <div class="ai-header-info">
+        <div class="ai-avatar-pulse">✦</div>
+        <div>
+          <h4 style="font-size: 0.95rem; margin-bottom: 0.1rem;">AI Campus Copilot</h4>
+          <span style="font-size: 0.72rem; color: #10B981;">● Online &bull; Gemini Powered</span>
+        </div>
+      </div>
+      <button class="modal-close" onclick="window.toggleAICopilot(false)">&times;</button>
+    </div>
+
+    <!-- Chat Body -->
+    <div class="ai-chat-body" id="ai-chat-body">
+      <div class="chat-bubble ai">
+        👋 Hello! I am your <b>SmartCampus AI Copilot</b>.<br /><br />
+        I can help you find available labs, route maintenance complaints, match lost items, or guide you around campus.
+        What would you like to do?
+      </div>
+    </div>
+
+    <!-- Suggestion Chips -->
+    <div class="ai-suggestion-chips">
+      <button class="chip-btn" onclick="window.sendAICopilotMessage('Which labs are available right now?')">
+        🏫 Free Labs?
+      </button>
+      <button class="chip-btn" onclick="window.sendAICopilotMessage('I lost my wallet in the library')">
+        👛 Lost Wallet
+      </button>
+      <button class="chip-btn" onclick="window.sendAICopilotMessage('Classroom projector is broken in Room 204')">
+        ⚙️ Report Issue
+      </button>
+      <button class="chip-btn" onclick="window.sendAICopilotMessage('Where is the Smart Seminar Hall?')">
+        🗺️ Locate Hall
+      </button>
+      <button class="chip-btn" onclick="window.sendAICopilotMessage('How is my course attendance?')">
+        📊 Attendance
+      </button>
+      <button class="chip-btn" onclick="window.sendAICopilotMessage('Order food from cafeteria and get parcel OTP')">
+        🍱 Order Food (OTP Parcel)
+      </button>
+      <button class="chip-btn" onclick="window.sendAICopilotMessage('Book an appointment with campus doctor')">
+        🩺 OPD Doctor Token
+      </button>
+      <button class="chip-btn" onclick="window.sendAICopilotMessage('Turn off lights in Room 204 to save energy')">
+        ⚡ Smart Switches (IoT)
+      </button>
+    </div>
+
+    <!-- Chat Footer Input -->
+    <div class="ai-chat-footer">
+      <input type="text" id="ai-copilot-input" placeholder="Ask anything about campus..."
+        onkeypress="if (event.key === 'Enter') window.sendAICopilotMessage()" />
+      <button class="btn btn-sm btn-lime" onclick="window.sendAICopilotMessage()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Modal Outlet -->
+  <div id="modal-outlet"></div>
+
+  <!-- Razorpay Official Checkout SDK -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <!-- Firebase Official Web SDK (Compat Mode) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+
+  <!-- JavaScript Modules -->
+  <script src="js/state.js"></script>
+  <script src="js/ai-copilot.js"></script>
+  <script src="js/modules/auth.js"></script>
+  <script src="js/modules/dashboard.js"></script>
+  <script src="js/modules/lost-found.js"></script>
+  <script src="js/modules/complaints.js"></script>
+  <script src="js/modules/rooms.js"></script>
+  <script src="js/modules/map.js"></script>
+  <script src="js/modules/events.js"></script>
+  <script src="js/modules/announcements.js"></script>
+  <script src="js/modules/attendance.js"></script>
+  <script src="js/modules/cafeteria.js"></script>
+  <script src="js/modules/health.js"></script>
+  <script src="js/modules/iot-control.js"></script>
+  <script src="js/modules/sos.js"></script>
+  <script src="js/modules/analytics.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
+</html>

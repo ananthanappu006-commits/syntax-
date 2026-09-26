@@ -1,0 +1,227 @@
+/* ==========================================================================
+   SmartCampus Design Tokens & Variables — Liquid Glass & Eduplex Aesthetic
+   ========================================================================== */
+
+/* Font Family Fallback & Declarations for Athelas, Moara, and Sans Uber */
+@font-face {
+  font-family: 'Athelas';
+  src: local('Athelas'), local('Athelas-Regular');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Moara';
+  src: local('Moara'), local('Moara-Regular');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Sans Uber';
+  src: local('Sans Uber'), local('Uber Move Text'), local('UberMove');
+  font-display: swap;
+}
+
+:root {
+  /* Typography strictly prioritizing requested fonts */
+  --font-heading: 'Moara', 'Athelas', 'Sans Uber', 'Plus Jakarta Sans', Georgia, serif;
+  --font-body: 'Sans Uber', 'Athelas', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: 'Athelas', 'Moara', 'Sans Uber', Georgia, serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Ambient Canvas / Backdrop Palette (Clean Neutral Canvas) */
+  --canvas-bg: #F4F6FC;
+  --canvas-overlay: transparent;
+
+  /* Core App Chassis / Outer Frame */
+  --bg-main-frame: #F8F9FD;
+  --bg-main: #F4F6FC;
+  --bg-card: rgba(255, 255, 255, 0.82);
+  --bg-card-hover: rgba(255, 255, 255, 0.95);
+  --bg-card-solid: #FFFFFF;
+  --bg-secondary: #EDF1F9;
+  --bg-surface: #F1F4F9;
+  --bg-glass: rgba(255, 255, 255, 0.72);
+  --bg-glass-strong: rgba(255, 255, 255, 0.92);
+
+  /* Sidebar Palette (Dark Obsidian / Slate from Reference) */
+  --sidebar-bg: #151821;
+  --sidebar-text: #94A3B8;
+  --sidebar-text-hover: #F8FAFC;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+
+  /* Iconic Neon Lime Active Pill from Reference */
+  --accent-lime: #D5F866;
+  --accent-lime-hover: #C5EA4E;
+  --accent-lime-text: #151821;
+  --accent-lime-glow: rgba(213, 248, 102, 0.4);
+
+  /* Reference Status Pills */
+  --pill-progress-bg: #EDE9FE;
+  --pill-progress-text: #6D28D9;
+  --pill-progress-border: #DDD6FE;
+
+  --pill-completed-bg: #ECFDF5;
+  --pill-completed-text: #047857;
+  --pill-completed-border: #A7F3D0;
+
+  --pill-upcoming-bg: #FFF7ED;
+  --pill-upcoming-text: #C2410C;
+  --pill-upcoming-border: #FED7AA;
+
+  /* Pastel Card Icon Backgrounds */
+  --pastel-peach: #FFEDD5;
+  --pastel-peach-text: #C2410C;
+  --pastel-lime: #ECFCCB;
+  --pastel-lime-text: #4D7C0F;
+  --pastel-lavender: #F3E8FF;
+  --pastel-lavender-text: #7E22CE;
+  --pastel-cyan: #E0F2FE;
+  --pastel-cyan-text: #0369A1;
+
+  /* Borders & Dividers */
+  --border-subtle: rgba(226, 232, 240, 0.8);
+  --border-card: rgba(255, 255, 255, 0.85);
+  --border-glass: 1px solid rgba(255, 255, 255, 0.65);
+  --border-focus: #D5F866;
+  --border-glow: rgba(213, 248, 102, 0.35);
+
+  /* Standard Action Palettes */
+  --primary: #151821;
+  --primary-light: #2D3345;
+  --primary-dark: #0D0F14;
+  --primary-glow: rgba(21, 24, 33, 0.15);
+
+  /* Navigation active states */
+  --nav-active-bg: var(--accent-lime);
+  --nav-active-text: var(--accent-lime-text);
+  --nav-active-border: transparent;
+  --nav-hover-bg: rgba(255, 255, 255, 0.08);
+
+  /* Accent Palettes */
+  --accent-blue: #3B82F6;
+  --accent-blue-light: #EFF6FF;
+  --accent-peach: #F97316;
+  --accent-cyan: #06B6D4;
+  --accent-purple: #8B5CF6;
+
+  /* Status Colors */
+  --status-available: #10B981;
+  --status-available-bg: #ECFDF5;
+  --status-available-glow: rgba(16, 185, 129, 0.25);
+
+  --status-pending: #F59E0B;
+  --status-pending-bg: #FFFBEB;
+  --status-pending-glow: rgba(245, 158, 11, 0.25);
+
+  --status-occupied: #EF4444;
+  --status-occupied-bg: #FEF2F2;
+  --status-occupied-glow: rgba(239, 68, 68, 0.25);
+
+  --status-sos: #E11D48;
+  --status-sos-glow: rgba(225, 29, 72, 0.35);
+
+  --status-info: #0284C7;
+  --status-info-bg: #F0F9FF;
+
+  /* Text Colors */
+  --text-primary: #151821;
+  --text-secondary: #475569;
+  --text-muted: #8E9BAE;
+  --text-inverse: #FFFFFF;
+
+  /* Liquid Glass Shadows */
+  --shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 8px 16px -2px rgba(100, 80, 160, 0.08), 0 2px 6px -1px rgba(100, 80, 160, 0.04);
+  --shadow-lg: 0 16px 32px -4px rgba(80, 60, 140, 0.12), 0 4px 10px -2px rgba(80, 60, 140, 0.06);
+  --shadow-chassis: 0 30px 80px -15px rgba(60, 20, 120, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.4);
+  --shadow-glow: 0 4px 20px var(--accent-lime-glow);
+  --shadow-glow-sos: 0 4px 20px rgba(225, 29, 72, 0.4);
+
+  --backdrop-blur: blur(24px) saturate(180%);
+  --backdrop-blur-sm: blur(12px);
+
+  /* Sizing & Transitions */
+  --sidebar-width: 250px;
+  --header-height: 76px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ==========================================================================
+   Dark Theme Design Tokens — Liquid Glass Obsidian & Cosmic Aura
+   ========================================================================== */
+[data-theme="dark"], body.dark-theme {
+  /* Ambient Canvas / Backdrop Palette in Dark Mode */
+  --canvas-bg: #0B0E16;
+  --canvas-overlay: transparent;
+
+  /* Core App Chassis / Outer Frame */
+  --bg-main-frame: #0E121B;
+  --bg-main: #0B0E16;
+  --bg-card: rgba(22, 27, 39, 0.78);
+  --bg-card-hover: rgba(30, 36, 52, 0.9);
+  --bg-card-solid: #151A25;
+  --bg-secondary: #131722;
+  --bg-surface: #171C28;
+  --bg-glass: rgba(18, 22, 33, 0.75);
+  --bg-glass-strong: rgba(18, 22, 33, 0.94);
+
+  /* Sidebar Palette (Deeper Obsidian) */
+  --sidebar-bg: #090B10;
+  --sidebar-text: #94A3B8;
+  --sidebar-text-hover: #F8FAFC;
+  --sidebar-border: rgba(255, 255, 255, 0.06);
+
+  /* Active Lime Pill remains crisp and punchy */
+  --accent-lime: #D5F866;
+  --accent-lime-hover: #C5EA4E;
+  --accent-lime-text: #0E121B;
+  --accent-lime-glow: rgba(213, 248, 102, 0.35);
+
+  /* Reference Status Pills in Dark Mode */
+  --pill-progress-bg: rgba(139, 92, 246, 0.2);
+  --pill-progress-text: #C4B5FD;
+  --pill-progress-border: rgba(139, 92, 246, 0.35);
+
+  --pill-completed-bg: rgba(16, 185, 129, 0.2);
+  --pill-completed-text: #6EE7B7;
+  --pill-completed-border: rgba(16, 185, 129, 0.35);
+
+  --pill-upcoming-bg: rgba(249, 115, 22, 0.2);
+  --pill-upcoming-text: #FDBA74;
+  --pill-upcoming-border: rgba(249, 115, 22, 0.35);
+
+  /* Pastel Card Icon Backgrounds */
+  --pastel-peach: rgba(249, 115, 22, 0.15);
+  --pastel-peach-text: #FB923C;
+  --pastel-lime: rgba(213, 248, 102, 0.15);
+  --pastel-lime-text: #D5F866;
+  --pastel-lavender: rgba(167, 139, 250, 0.15);
+  --pastel-lavender-text: #C4B5FD;
+  --pastel-cyan: rgba(56, 189, 248, 0.15);
+  --pastel-cyan-text: #38BDF8;
+
+  /* Borders & Dividers in Dark Mode */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-card: rgba(255, 255, 255, 0.1);
+  --border-glass: 1px solid rgba(255, 255, 255, 0.1);
+  --border-focus: #D5F866;
+  --border-glow: rgba(213, 248, 102, 0.3);
+
+  /* High Visibility Text */
+  --text-primary: #F8FAFC;
+  --text-secondary: #CBD5E1;
+  --text-muted: #64748B;
+  --text-inverse: #0F172A;
+
+  /* Shadows for Rich Dark Canvas */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 18px -2px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 16px 36px -4px rgba(0, 0, 0, 0.65);
+  --shadow-chassis: 0 30px 80px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.12);
+}

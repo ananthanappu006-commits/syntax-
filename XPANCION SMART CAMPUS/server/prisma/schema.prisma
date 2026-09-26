@@ -1,0 +1,328 @@
+// ==============================================================================
+// SmartCampus Database Schema (PostgreSQL with Prisma ORM)
+// Modules: Health & Infirmary, Attendance Excusal Sync, and Mobile IoT Control
+// ==============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ------------------------------------------------------------------------------
+// 1. Core Identity & User Roles
+// ------------------------------------------------------------------------------
+enum UserRole {
+  STUDENT
+  FACULTY
+  ADMIN
+  SECURITY
+  DOCTOR
+  MAINTENANCE
+}
+
+model User {
+  id              String         @id @default(uuid())
+  email           String         @unique
+  passwordHash    String
+  name            String
+  role            UserRole       @default(STUDENT)
+  phoneNumber     String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  studentProfile  StudentProfile?
+  facultyProfile  FacultyProfile?
+  doctorProfile   DoctorProfile?
+
+  // Relations
+  initiatedAlerts EmergencyDispatchAlert[]
+  deviceLogs      DeviceStateLog[]
+}
+
+model StudentProfile {
+  id             String         @id @default(uuid())
+  userId         String         @unique
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  studentIdNo    String         @unique // e.g. CS2023-884
+  department     String
+  semester       Int
+  assignedDormId String?        // Room ID for hostel dorm
+  assignedDorm   Room?          @relation("StudentDormRoom", fields: [assignedDormId], references: [id])
+
+  // Medical & Health Records
+  bloodGroup     String?
+  allergies      String[]       @default([])
+  chronicIssues  String[]       @default([])
+  
+  ehrRecords     EHRRecord[]
+  medicalLeaves  MedicalLeaveRequest[]
+  appointments   DoctorAppointment[]
+  attendance     AttendanceRecord[]
+  enrollments    CourseEnrollment[]
+}
+
+model FacultyProfile {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  employeeId  String   @unique
+  department  String
+  designation String
+}
+
+model DoctorProfile {
+  id             String              @id @default(uuid())
+  userId         String              @unique
+  user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  licenseNo      String              @unique
+  specialization String
+  opdRoomNumber  String
+  isOnDuty       Boolean             @default(true)
+
+  appointments   DoctorAppointment[]
+  prescriptions  Prescription[]
+  approvedLeaves MedicalLeaveRequest[]
+}
+
+// ------------------------------------------------------------------------------
+// 2. Academic Attendance & Class Schedule Models
+// ------------------------------------------------------------------------------
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  EXCUSED   // Set automatically by approved Medical Leave Passes
+  LATE
+}
+
+model Course {
+  id          String             @id @default(uuid())
+  code        String             @unique // e.g. CS302
+  name        String
+  credits     Int
+  sessions    ClassSession[]
+  enrollments CourseEnrollment[]
+}
+
+model CourseEnrollment {
+  id        String         @id @default(uuid())
+  studentId String
+  student   StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  courseId  String
+  course    Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, courseId])
+}
+
+model ClassSession {
+  id          String             @id @default(uuid())
+  courseId    String
+  course      Course             @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  roomId      String
+  room        Room               @relation(fields: [roomId], references: [id])
+  sessionDate DateTime           @db.Date
+  startTime   DateTime
+  endTime     DateTime
+  topic       String?
+
+  attendance  AttendanceRecord[]
+}
+
+model AttendanceRecord {
+  id             String           @id @default(uuid())
+  sessionId      String
+  session        ClassSession     @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  studentId      String
+  student        StudentProfile   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  status         AttendanceStatus @default(ABSENT)
+  isExcused      Boolean          @default(false)
+  excusalReason  String?          // Links to approved Medical Pass
+  medicalLeaveId String?
+  medicalLeave   MedicalLeaveRequest? @relation(fields: [medicalLeaveId], references: [id])
+  markedAt       DateTime         @default(now())
+
+  @@unique([sessionId, studentId])
+}
+
+// ------------------------------------------------------------------------------
+// 3. Health Center, OPD & Medical Leave Integration Models
+// ------------------------------------------------------------------------------
+enum MedicalLeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+model MedicalLeaveRequest {
+  id                String             @id @default(uuid())
+  studentId         String
+  student           StudentProfile     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  doctorId          String
+  doctor            DoctorProfile      @relation(fields: [doctorId], references: [id])
+  diagnosis         String
+  startDate         DateTime           @db.Date
+  endDate           DateTime           @db.Date
+  totalDays         Int
+  status            MedicalLeaveStatus @default(PENDING)
+  doctorNotes       String?
+  certificateQrCode String             @unique
+  approvedAt        DateTime?
+  attendanceSynced  Boolean            @default(false)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  excusedAttendance AttendanceRecord[]
+}
+
+enum AppointmentStatus {
+  WAITING
+  IN_CONSULTATION
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+model DoctorAppointment {
+  id           String            @id @default(uuid())
+  tokenNumber  Int
+  studentId    String
+  student      StudentProfile    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  doctorId     String
+  doctor       DoctorProfile     @relation(fields: [doctorId], references: [id])
+  reason       String
+  slotTime     DateTime
+  status       AppointmentStatus @default(WAITING)
+  createdAt    DateTime          @default(now())
+}
+
+model EHRRecord {
+  id            String         @id @default(uuid())
+  studentId     String
+  student       StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  bloodPressure String?
+  pulseBpm      Int?
+  spo2Percent   Int?
+  temperatureF  Float?
+  notes         String?
+  createdAt     DateTime       @default(now())
+}
+
+model Prescription {
+  id           String             @id @default(uuid())
+  doctorId     String
+  doctor       DoctorProfile      @relation(fields: [doctorId], references: [id])
+  diagnosis    String
+  notes        String?
+  issuedAt     DateTime           @default(now())
+  items        PrescriptionItem[]
+}
+
+model PrescriptionItem {
+  id             String       @id @default(uuid())
+  prescriptionId String
+  prescription   Prescription @relation(fields: [prescriptionId], references: [id], onDelete: Cascade)
+  medicineName   String
+  dosage         String       // e.g. "1 tab twice daily"
+  timing         String       // e.g. "After food"
+  durationDays   Int
+}
+
+// ------------------------------------------------------------------------------
+// 4. Mobile IoT Smart Switch & Appliance Control Models
+// ------------------------------------------------------------------------------
+enum RoomType {
+  CLASSROOM
+  LABORATORY
+  AUDITORIUM
+  DORMITORY
+  INFIRMARY
+}
+
+model Room {
+  id                   String           @id @default(uuid())
+  name                 String           // e.g. "Lecture Room 204"
+  building             String           // e.g. "Main Block"
+  floor                Int
+  type                 RoomType         @default(CLASSROOM)
+  capacity             Int
+  geofenceRadiusMeters Float            @default(25.0)
+  latitude             Float            // GPS Latitude
+  longitude            Float            // GPS Longitude
+  allowedRoles         UserRole[]       @default([FACULTY, ADMIN])
+
+  devices              IoTDevice[]
+  classSessions        ClassSession[]
+  dormStudents         StudentProfile[] @relation("StudentDormRoom")
+}
+
+enum DeviceType {
+  LIGHT
+  FAN
+  AC
+  SOCKET
+}
+
+model IoTDevice {
+  id             String           @id @default(uuid())
+  roomId         String
+  room           Room             @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  name           String           // e.g. "Front Tube LED Array"
+  deviceType     DeviceType
+  relayChannel   Int              // 1 to 4 on ESP32 Relay Board
+  mqttCommandTopic String         // e.g. "campus/main/rm_204/light_1/command"
+  mqttStateTopic   String         // e.g. "campus/main/rm_204/light_1/state"
+  isStateOn      Boolean          @default(false)
+  dimmingLevel   Int?             @default(100) // 0-100% for lights
+  fanSpeed       Int?             @default(3)   // 1-5 for BLDC fans
+  targetTempC    Int?             @default(24)  // For AC units
+  ratedWatts     Int              @default(100)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  stateLogs      DeviceStateLog[]
+  powerLogs      PowerTelemetryLog[]
+}
+
+model DeviceStateLog {
+  id             String    @id @default(uuid())
+  deviceId       String
+  device         IoTDevice @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  userId         String?
+  user           User?     @relation(fields: [userId], references: [id])
+  previousState  Boolean
+  newState       Boolean
+  triggerSource  String    // e.g. "MOBILE_APP", "GEOFENCE_AUTO_CUTOFF", "EMERGENCY_OVERRIDE"
+  timestamp      DateTime  @default(now())
+}
+
+model PowerTelemetryLog {
+  id             String    @id @default(uuid())
+  deviceId       String
+  device         IoTDevice @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  voltageVolts   Float
+  currentAmps    Float
+  powerWatts     Float
+  energyKwh      Float
+  recordedAt     DateTime  @default(now())
+}
+
+// ------------------------------------------------------------------------------
+// 5. Emergency SOS & Ambulance Dispatches
+// ------------------------------------------------------------------------------
+model EmergencyDispatchAlert {
+  id             String    @id @default(uuid())
+  callerId       String
+  caller         User      @relation(fields: [callerId], references: [id])
+  emergencyType  String    // "MEDICAL_AMBULANCE", "FIRE_EVACUATION", "SECURITY_SOS"
+  latitude       Float
+  longitude      Float
+  locationName   String
+  triageCode     String    // "CODE_RED", "CODE_YELLOW", "CODE_BLUE"
+  notes          String?
+  isResolved     Boolean   @default(false)
+  dispatchedAt   DateTime  @default(now())
+}
